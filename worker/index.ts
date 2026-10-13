@@ -28,7 +28,7 @@ type Decided = Parsed & {
   latency_ms: number;
 };
 
-const TIMEOUT_MS = 120_000;
+const TIMEOUT_MS = 600_000;
 const MAX_QUEUE = 30; // whole cluster
 const MAX_PENDING_PER_IP = 2;
 const ASKS_PER_MINUTE = 10;
@@ -331,7 +331,7 @@ export class Hev extends DurableObject<Env> {
         },
         ...(picks
           ? {}
-          : { note: "No human answered in 2 minutes. Here's a uniform prior instead." }),
+          : { note: "No human answered in 10 minutes. Here's a uniform prior instead." }),
       },
     });
   }

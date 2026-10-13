@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { fmtMs, humanId, myHash, useFeed, useNow, type Decided, type Job } from "./shared.tsx";
 
-const TIMEOUT_MS = 120_000;
+const TIMEOUT_MS = 600_000;
 
 type Kind = "noul" | "choice" | "score";
 type Draft = {

@@ -4,7 +4,7 @@
 
 Hev is not meant for production. It runs on a single Durable Object, has no accounts, and its latency is however long a stranger takes to click a button.
 
-Send a question to `POST /v1/systemone`. It shows up in a live feed on the page, someone clicks an answer, and your request returns with the result in Clef's response format. If nobody answers within 2 minutes, you get a uniform prior.
+Send a question to `POST /v1/systemone`. It shows up in a live feed on the page, someone clicks an answer, and your request returns with the result in Clef's response format. If nobody answers within 10 minutes, you get a uniform prior.
 
 ```bash
 curl https://usehev.com/v1/systemone -d '{
