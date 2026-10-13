@@ -566,20 +566,47 @@ function DecidedRow({ d }: DecidedRowProps) {
     .filter(Boolean)
     .join(", ");
   return (
-    <li className="flex items-center justify-between gap-4 px-1 py-2.5 text-sm">
-      <span className="text-ink/60 truncate">{d.state}</span>
-      <span className="shrink-0 text-right font-mono text-xs">
-        {d.picks ? (
-          <>
-            <span className="text-brand">{summary}</span>{" "}
-            <span className="text-muted">
-              · human #{(parseInt(d.id.slice(4, 8), 16) % 9000) + 1000} · {fmtMs(d.latency_ms)}
-            </span>
-          </>
-        ) : (
-          <span className="text-amber-700">Timed out</span>
-        )}
-      </span>
+    <li>
+      <details className="group">
+        <summary className="hover:bg-ink/[0.04] focus-visible:outline-brand/60 flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-1 py-2.5 text-sm focus-visible:outline-2 [&::-webkit-details-marker]:hidden">
+          <span className="text-ink/60 group-open:text-ink group-hover:text-ink/85 truncate">
+            {d.state}
+          </span>
+          <span className="shrink-0 text-right font-mono text-xs">
+            {d.picks ? (
+              <>
+                <span className="text-brand">{summary}</span>{" "}
+                <span className="text-muted">
+                  · human #{(parseInt(d.id.slice(4, 8), 16) % 9000) + 1000} · {fmtMs(d.latency_ms)}
+                </span>
+              </>
+            ) : (
+              <span className="text-amber-700">Timed out</span>
+            )}
+          </span>
+        </summary>
+        <div className="space-y-4 px-1 pt-1 pb-4">
+          <p className="font-display text-lg leading-snug font-semibold tracking-tight break-words">
+            “{d.state}”
+          </p>
+          {Object.entries(d.questions).map(([key, q]) => (
+            <div key={key}>
+              <p className="text-ink/80 mb-2 text-sm">{q.instructions}</p>
+              <div className="flex flex-wrap gap-2">
+                {q.options.map((o) => (
+                  <span
+                    key={o.key}
+                    title={o.hint}
+                    className={`rounded-full border px-3 py-1 text-sm ${d.picks?.[key] === o.key ? "border-brand bg-brand text-paper" : "border-line text-ink/50"}`}
+                  >
+                    {o.label}
+                  </span>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+      </details>
     </li>
   );
 }
