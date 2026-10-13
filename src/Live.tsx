@@ -56,15 +56,17 @@ type Result = {
   latency_ms?: number;
 };
 
+const EMPTY: Draft = {
+  state: "",
+  question: "",
+  kind: "noul",
+  options: ["", ""],
+  scale: "1–5",
+  levels: ["", ""],
+};
+
 function Composer() {
-  const [draft, setDraft] = useState<Draft>({
-    state: "",
-    question: "",
-    kind: "noul",
-    options: ["", ""],
-    scale: "1–5",
-    levels: ["", ""],
-  });
+  const [draft, setDraft] = useState<Draft>(EMPTY);
   const [startedAt, setStartedAt] = useState<number | null>(null);
   const [result, setResult] = useState<Result | null>(null);
   const [raw, setRaw] = useState("");
@@ -78,20 +80,28 @@ function Composer() {
   const set = (patch: Partial<Draft>) => setDraft((d) => ({ ...d, ...patch }));
 
   async function send() {
+    const sent = draft;
+    setDraft(EMPTY);
     setResult(null);
     setRaw("");
     setStartedAt(Date.now());
     const res = await fetch("/v1/systemone", {
       method: "POST",
       headers: { "x-hev-human": humanId },
-      body: JSON.stringify(toRequest(draft)),
+      body: JSON.stringify(toRequest(sent)),
     }).catch(() => null);
     const text = res ? await res.text() : "";
     setRaw(text);
+    let parsed: Result;
     try {
-      setResult(JSON.parse(text));
+      parsed = JSON.parse(text);
     } catch {
-      setResult({ error: { message: "Couldn't reach the humans. Try again." } });
+      parsed = { error: { message: "Couldn't reach the humans. Try again." } };
+    }
+    setResult(parsed);
+    // Rejected (rate limit, full queue, moderation): give the question back, unless a new one was started.
+    if (parsed.error) {
+      setDraft((d) => (d.state || d.question ? d : sent));
     }
   }
 
