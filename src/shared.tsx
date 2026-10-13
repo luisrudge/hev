@@ -46,6 +46,66 @@ crypto.subtle.digest("SHA-256", new TextEncoder().encode(humanId)).then((d) => {
   listeners.forEach((l) => l());
 });
 
+// Sound: a soft two-note chime, synthesized, so there's no file to load. Browsers keep audio
+// locked until the first click or key press, so questions before that stay silent.
+let muted = false;
+try {
+  muted = localStorage.getItem("hev-muted") === "1";
+} catch {}
+const muteListeners = new Set<() => void>();
+let audio: AudioContext | null = null;
+let lastChime = 0;
+
+const unlock = () => {
+  audio ??= new AudioContext();
+  void audio.resume();
+};
+window.addEventListener("pointerdown", unlock, { once: true });
+window.addEventListener("keydown", unlock, { once: true });
+
+function chime(force = false) {
+  // One chime per 2s at most, so a burst of questions doesn't turn into a song.
+  if (!audio || audio.state !== "running" || (!force && (muted || Date.now() - lastChime < 2000))) {
+    return;
+  }
+  lastChime = Date.now();
+  const t = audio.currentTime;
+  for (const [freq, delay] of [
+    [880, 0],
+    [1320, 0.09],
+  ]) {
+    const osc = audio.createOscillator();
+    const gain = audio.createGain();
+    osc.type = "sine";
+    osc.frequency.value = freq;
+    gain.gain.setValueAtTime(0, t + delay);
+    gain.gain.linearRampToValueAtTime(0.04, t + delay + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, t + delay + 0.4);
+    osc.connect(gain).connect(audio.destination);
+    osc.start(t + delay);
+    osc.stop(t + delay + 0.45);
+  }
+}
+
+export function useMuted() {
+  return useSyncExternalStore(
+    (l) => (muteListeners.add(l), () => muteListeners.delete(l)),
+    () => muted,
+  );
+}
+
+export function toggleMuted() {
+  muted = !muted;
+  try {
+    localStorage.setItem("hev-muted", muted ? "1" : "0");
+  } catch {}
+  muteListeners.forEach((l) => l());
+  if (!muted) {
+    unlock();
+    chime(true); // a preview, so unmuting tells you what you'll hear
+  }
+}
+
 // One socket for the whole page. The server sends a full snapshot on every change.
 let retries = 0;
 function connect() {
@@ -54,7 +114,15 @@ function connect() {
   );
   ws.onopen = () => (retries = 0);
   ws.onmessage = (e) => {
-    feed = JSON.parse(e.data);
+    const next: Feed = JSON.parse(e.data);
+    // Chime for someone else's new question, not for the first snapshot after load.
+    if (feed) {
+      const seen = new Set(feed.pending.map((j) => j.id));
+      if (next.pending.some((j) => !seen.has(j.id) && !(j.asker && j.asker === myHash))) {
+        chime();
+      }
+    }
+    feed = next;
     listeners.forEach((l) => l());
   };
   // Back off (1s, 2s, 4s… capped near 30s) with jitter, so a full room or a deploy doesn't bring
