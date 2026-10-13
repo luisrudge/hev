@@ -1,0 +1,13 @@
+services:
+  worker:
+    # The Worker and its Durable Object. Needs Cloudflare credentials (project secrets in orbs).
+    command: pnpm build && pnpm dev
+    port: 1337
+  web:
+    # The page with hot reload, proxying /v1 and /api to the worker.
+    command: pnpm dev:web --host 0.0.0.0 --port "$PORT" --strictPort
+    env:
+      WORKER_PORT: "1337"
+    portal:
+      url: /
+      title: Hev

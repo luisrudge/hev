@@ -1,0 +1,39 @@
+{
+  "name": "hev",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vp build",
+    "check": "vp check --fix",
+    "deploy": "vp build && alchemy deploy --stage prod --yes",
+    "dev": "alchemy dev",
+    "dev:web": "vp dev",
+    "prepare": "vp config"
+  },
+  "dependencies": {
+    "@effect/platform-node": "^4.0.3",
+    "alchemy": "2.0.0-beta.81",
+    "effect": "^4.0.2",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^5.20261010.1",
+    "@tailwindcss/vite": "^4.3.3",
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.2",
+    "tailwindcss": "^4.3.3",
+    "typescript": "^7.0.2",
+    "vite": "catalog:",
+    "vite-plus": "catalog:"
+  },
+  "devEngines": {
+    "packageManager": {
+      "name": "pnpm",
+      "version": "12.11.2",
+      "onFail": "download"
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "skills": {
+    "react": {
+      "source": "luisrudge/skills",
+      "sourceType": "github",
+      "skillPath": "skills/react/SKILL.md",
+      "computedHash": "58342b53752a4b6665a74c6f9fdbbe1367083bd86d583e000f51a69c3e867ff3"
+    }
+  }
+}

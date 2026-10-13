@@ -1,0 +1,48 @@
+#!/usr/bin/env bash
+# Prepares a fresh Amp orb: the pnpm version CI uses, dependencies for the site
+# and the launch video, Microsoft Edge (the video renders with it), and numpy for
+# the video's uv scripts. Safe to rerun on a warm snapshot.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+PNPM_VERSION=12.11.2 # keep in sync with .github/workflows/deploy.yml
+
+step() {
+  local name=$1 start=$SECONDS
+  shift
+  echo "==> $name"
+  "$@"
+  echo "    $name took $((SECONDS - start))s"
+}
+
+sudo_() { if [ "$(id -u)" -eq 0 ]; then "$@"; else sudo "$@"; fi; }
+
+install_pnpm() {
+  if [ "$(pnpm --version 2>/dev/null || true)" != "$PNPM_VERSION" ]; then
+    sudo_ npm install -g --no-fund --no-audit "pnpm@$PNPM_VERSION"
+  fi
+  pnpm --version
+}
+
+install_edge() {
+  if command -v microsoft-edge-stable >/dev/null; then
+    microsoft-edge-stable --version
+    return
+  fi
+  # The package replaces this list with its own microsoft-edge.sources on install.
+  curl -fsSL --retry 3 -m 60 https://packages.microsoft.com/keys/microsoft.asc \
+    | gpg --dearmor | sudo_ tee /usr/share/keyrings/microsoft-edge.gpg >/dev/null
+  echo "deb [arch=amd64 signed-by=/usr/share/keyrings/microsoft-edge.gpg] https://packages.microsoft.com/repos/edge stable main" \
+    | sudo_ tee /etc/apt/sources.list.d/microsoft-edge.list >/dev/null
+  sudo_ apt-get update -qq
+  sudo_ env DEBIAN_FRONTEND=noninteractive apt-get install -y -qq --no-install-recommends microsoft-edge-stable
+  microsoft-edge-stable --version
+}
+
+step "pnpm $PNPM_VERSION" install_pnpm
+step "site dependencies" pnpm install --frozen-lockfile
+# render.mjs drives the system Edge, so Playwright needs no browser download.
+step "video dependencies" env PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1 pnpm --dir video install --frozen-lockfile
+step "Microsoft Edge" install_edge
+step "numpy for uv scripts" uv run --no-project --with numpy python -c "import numpy"

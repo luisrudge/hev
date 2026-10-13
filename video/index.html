@@ -1,0 +1,495 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Hev decisions video</title>
+<style>
+  @font-face { font-family: "Bricolage"; font-weight: 500; src: url("fonts/BricolageGrotesque12pt-Medium.ttf"); }
+  @font-face { font-family: "Bricolage"; font-weight: 600; src: url("fonts/BricolageGrotesque12pt-SemiBold.ttf"); }
+  @font-face { font-family: "Bricolage Display"; font-weight: 700; src: url("fonts/BricolageGrotesque96pt-Bold.ttf"); }
+  @font-face { font-family: "JetBrains Mono"; font-weight: 400; src: url("fonts/JetBrainsMono-Regular.ttf"); }
+  @font-face { font-family: "JetBrains Mono"; font-weight: 500; src: url("fonts/JetBrainsMono-Medium.ttf"); }
+  @font-face { font-family: "Marker"; font-weight: 400; src: url("fonts/PermanentMarker-Regular.ttf"); }
+  :root { --ink: #16130f; --muted: #7a746c; --line: #e7e3dd; --paper: #fbfaf8; --brand: #2b59ff; }
+  html, body { margin: 0; width: 1440px; height: 1440px; overflow: hidden; background: #ebe8e3; }
+  body { font-family: "Bricolage", sans-serif; color: var(--ink); -webkit-font-smoothing: antialiased; }
+  #stage { position: absolute; inset: 0; overflow: hidden; }
+  #world { position: absolute; left: 720px; top: 720px; width: 0; height: 0; transform-origin: 0 0; }
+  #shape { position: absolute; overflow: hidden; box-shadow: 0 1px 2px rgba(22,19,15,0.06), 0 14px 40px -18px rgba(22,19,15,0.25); }
+  .layer { position: absolute; left: 50%; top: 50%; }
+  .abs { position: absolute; }
+  .t { white-space: nowrap; line-height: 1; }
+  .mono { font-family: "JetBrains Mono", monospace; }
+  .label { font-size: 13px; font-weight: 500; color: var(--muted); }
+  .field { border: 1.5px solid var(--line); background: var(--paper); border-radius: 14px; box-sizing: border-box; }
+  .pill { height: 36px; border-radius: 18px; border: 1.5px solid var(--line); background: #fff; font-size: 15px; font-weight: 500; display: flex; align-items: center; padding: 0 16px; box-sizing: border-box; line-height: 1; }
+  .row { position: absolute; left: 0; display: flex; gap: 8px; align-items: center; }
+  svg { display: block; overflow: visible; }
+  .cursor { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="world">
+    <div id="shape">
+
+      <!-- 1. title -->
+      <div class="layer" id="L-title" style="width:560px;height:230px;margin:-115px 0 0 -280px">
+        <div class="abs t mono" id="kicker" style="left:0;right:0;top:40px;text-align:center;font-size:13px;font-weight:500;letter-spacing:4px;color:var(--brand)">INTRODUCING</div>
+        <div class="abs t" id="titleMain" style="left:0;right:0;top:84px;text-align:center;font-family:'Bricolage Display';font-weight:700;font-size:64px;letter-spacing:-3.2px">Decisions API</div>
+        <div class="abs t" id="marker" style="top:52px;font-family:Marker;font-size:26px;color:var(--brand);transform-origin:0 100%">(Human)</div>
+        <div class="abs t mono" id="site" style="left:200px;top:206px;width:160px;height:40px;border-radius:20px;background:var(--brand);color:#fff;font-size:16px;font-weight:500;display:flex;align-items:center;justify-content:center">usehev.com</div>
+        <div class="abs t" id="titleSub" style="left:0;right:0;top:168px;text-align:center;font-size:19px;font-weight:500;color:var(--muted)">Powered by <span style="color:var(--brand)">Hev</span>, a human decision model.</div>
+      </div>
+
+      <!-- 1b. model card -->
+      <div class="layer" id="L-card" style="width:520px;height:280px;margin:-140px 0 0 -260px">
+        <div class="abs t mono" style="left:28px;top:26px;font-size:12px;font-weight:500;letter-spacing:3px;color:var(--brand)">MODEL CARD</div>
+        <div class="abs t" style="left:28px;top:48px;font-family:'Bricolage Display';font-weight:700;font-size:48px;letter-spacing:-2.4px">Hev</div>
+        <div class="abs t" style="left:28px;top:104px;font-size:16px;font-weight:500;color:var(--muted)">A human decision model.</div>
+        <div class="abs" id="specs" style="left:20px;top:134px;width:480px"></div>
+      </div>
+
+      <!-- 2. ask -->
+      <div class="layer" id="L-ask" style="width:480px;height:470px;margin:-235px 0 0 -240px">
+        <div class="abs" style="left:24px;right:24px;top:0;height:52px;display:flex;align-items:baseline;padding-top:16px;box-sizing:border-box;line-height:1">
+          <span style="font-family:'Bricolage Display';font-weight:700;font-size:21px;color:var(--brand);margin-right:8px">1.</span>
+          <span style="font-size:21px;font-weight:600">Ask a question</span>
+          <span class="mono" style="margin-left:auto;font-size:13px;color:var(--muted)">model</span>
+          <span class="mono" style="margin-left:8px;font-size:14px;font-weight:500;color:var(--brand)">hev</span>
+        </div>
+        <div class="abs" style="left:0;right:0;top:52px;height:1.5px;background:var(--line)"></div>
+        <div class="abs t label" style="left:24px;top:68px">Context</div>
+        <div class="abs field" style="left:24px;top:86px;width:432px;height:72px"></div>
+        <div class="abs t" id="ctx1" style="left:40px;top:100px;font-size:17px;font-weight:500"></div>
+        <div class="abs t" id="ctx2" style="left:40px;top:124px;font-size:17px;font-weight:500"></div>
+        <div class="abs t label" style="left:24px;top:172px">Question</div>
+        <div class="abs field" style="left:24px;top:190px;width:432px;height:44px"></div>
+        <div class="abs t" id="qText" style="left:40px;top:204px;font-size:17px;font-weight:500"></div>
+        <div class="abs" id="caret" style="width:2px;height:20px;background:var(--brand)"></div>
+        <div class="abs t label" style="left:24px;top:250px">Answer type</div>
+        <div class="abs" style="left:24px;top:268px;width:432px;height:48px;border:1.5px solid var(--line);border-radius:14px;box-sizing:border-box"></div>
+        <div class="abs" id="typeInk" style="left:24px;top:268px;width:432px;height:48px"></div>
+        <div class="abs" id="indicator" style="top:273px;height:38px;border-radius:10px;background:var(--ink)"></div>
+        <div class="abs" id="typeWhite" style="left:24px;top:268px;width:432px;height:48px"></div>
+        <div class="row" id="opt-noul" style="left:24px;top:332px"><div class="pill">Yes</div><div class="pill">No</div></div>
+        <div class="row" id="opt-choice" style="left:24px;top:332px"><div class="pill">Billing</div><div class="pill">Technical</div><div class="pill">Sales</div></div>
+        <div class="row" id="opt-score" style="left:24px;top:332px"><div class="pill">Low</div><span style="color:var(--muted)">→</span><div class="pill">Medium</div><span style="color:var(--muted)">→</span><div class="pill">High</div></div>
+        <div class="abs t" id="askBtn" style="left:272px;top:400px;width:184px;height:52px;border-radius:26px;background:var(--brand);color:#fff;font-size:17px;font-weight:600;display:flex;align-items:center;justify-content:center">Ask a human</div>
+      </div>
+
+      <!-- 3. latency chart -->
+      <div class="layer" id="L-chart" style="width:560px;height:310px;margin:-155px 0 0 -280px">
+        <div class="abs t mono" style="left:28px;top:26px;font-size:12px;font-weight:500;letter-spacing:3px;color:var(--brand)">LATENCY</div>
+        <div class="abs t" style="left:28px;top:46px;font-size:22px;font-weight:600">How long a decision takes</div>
+        <div class="abs" id="ticks" style="left:0;top:0"></div>
+        <div class="abs" id="bars" style="left:0;top:0"></div>
+        <div class="abs t" id="hevLabel" style="right:36px;font-weight:600;letter-spacing:-0.5px;color:var(--brand);transform-origin:100% 100%"></div>
+      </div>
+
+      <!-- 3b. who knows -->
+      <div class="layer" id="L-who" style="width:760px;height:760px;margin:-380px 0 0 -380px">
+        <div class="abs t" style="left:0;right:0;top:358px;text-align:center;font-family:'Bricolage Display';font-weight:700;font-size:104px;letter-spacing:-5.2px;color:#fff">Who knows?</div>
+      </div>
+
+      <!-- 4. answer -->
+      <div class="layer" id="L-decide" style="width:480px;height:350px;margin:-175px 0 0 -240px">
+        <div class="abs" style="left:22px;top:22px;width:9px;height:9px;border-radius:5px;background:#34d399"></div>
+        <div class="abs t" style="left:38px;top:17px;font-family:'Bricolage Display';font-weight:700;font-size:21px;color:var(--brand)">2.</div>
+        <div class="abs t" style="left:60px;top:17px;font-size:21px;font-weight:600">Answer other humans</div>
+        <div class="abs t mono" style="right:24px;top:20px;font-size:13px;color:var(--muted)">1 online</div>
+        <div class="abs" style="left:0;right:0;top:52px;height:1.5px;background:var(--line)"></div>
+        <div class="abs field" id="job" style="left:20px;top:68px;width:440px;height:210px;overflow:hidden;border-radius:18px">
+          <div class="abs" id="jobBar" style="left:0;top:0;height:3px;background:var(--brand)"></div>
+          <div class="abs t mono" style="left:16px;top:16px;font-size:12px;color:var(--muted)">hev_3f9a1c2e</div>
+          <div class="abs t mono" id="jobLeft" style="right:16px;top:16px;font-size:12px;color:var(--muted)"></div>
+          <div class="abs t" style="left:16px;top:42px;font-size:19px;font-weight:600">“Checkout has been failing for every</div>
+          <div class="abs t" style="left:16px;top:67px;font-size:19px;font-weight:600">customer for the last hour.”</div>
+          <div class="abs t" style="left:16px;top:106px;font-size:15px;font-weight:500;opacity:0.8">Is this support request urgent?</div>
+          <div class="abs pill" id="pillYes" style="left:16px;top:138px">Yes</div>
+          <div class="abs pill" id="pillNo" style="left:84px;top:138px">No</div>
+        </div>
+        <div class="abs t" id="toast" style="left:180px;top:294px;width:120px;height:38px;border-radius:19px;border:1.5px solid rgba(43,89,255,0.45);box-sizing:border-box;font-size:15px;font-weight:500;display:flex;align-items:center;justify-content:center;background:#fff">Decided</div>
+      </div>
+
+      <!-- 5. Jev-compatible -->
+      <div class="layer" id="L-compat" style="width:560px;height:440px;margin:-220px 0 0 -280px">
+        <div class="abs t" style="left:28px;top:26px;font-size:22px;font-weight:600">Jev-compatible API</div>
+        <div class="abs" style="left:20px;top:64px;width:520px;height:96px;border:1.5px solid var(--line);border-radius:14px;overflow:hidden;box-sizing:border-box">
+          <div class="abs" style="left:0;right:0;top:0;height:47px;background:var(--paper)"></div>
+          <div class="abs t mono" style="left:16px;top:15px;font-size:15px;color:var(--muted)">- https://api.typesafe.ai/v1/systemone</div>
+          <div class="abs" id="strike" style="left:34px;top:23px;height:2px;background:var(--ink)"></div>
+          <div class="abs" id="newRow" style="left:0;right:0;top:47px;height:47px;background:rgba(43,89,255,0.08)">
+            <div class="abs t mono" style="left:16px;top:15px;font-size:15px;color:var(--brand)">+ https://usehev.com/v1/systemone</div>
+          </div>
+        </div>
+        <div class="abs t" id="keep" style="left:28px;top:178px;font-size:17px;font-weight:500">Keep your code. Same response:</div>
+        <div class="abs" id="codeBox" style="left:20px;top:210px;width:520px;height:170px;border-radius:14px;background:var(--ink)"></div>
+        <div class="abs t" id="apiKey" style="left:28px;top:400px;font-size:17px;font-weight:500;color:var(--muted)">Please don't send any API keys.</div>
+      </div>
+
+    </div>
+  </div>
+  <svg class="cursor" id="asker" width="48" height="48" viewBox="0 0 34 34">
+    <path d="M4 3 L4 27 L10.5 21.2 L15 30.5 L19.2 28.6 L14.8 19.6 L23.5 19.6 Z" fill="#16130f" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" />
+  </svg>
+  <div class="cursor" id="human">
+    <svg width="48" height="48" viewBox="0 0 34 34"><path d="M4 3 L4 27 L10.5 21.2 L15 30.5 L19.2 28.6 L14.8 19.6 L23.5 19.6 Z" fill="#16130f" stroke="#fff" stroke-width="2.2" stroke-linejoin="round" /></svg>
+    <div class="abs t mono" style="left:40px;top:46px;padding:11px 18px;border-radius:22px;background:#16130f;color:#fff;font-size:26px">human #4821</div>
+  </div>
+</div>
+
+<script>
+// ------------------------------------------------------------------------------------
+// Time: 120 BPM, 18 bars of 4 beats, 36s. Every style below is a function of t.
+const BEAT = 0.5;
+const L = 72 * BEAT;
+
+// Closed-form spring step response: 0 at tau <= 0, settles at 1.
+function S(tau, w = 14, z = 0.86) {
+  if (tau <= 0) return 0;
+  if (z >= 1) return 1 - Math.exp(-w * tau) * (1 + w * tau);
+  const wd = w * Math.sqrt(1 - z * z);
+  return 1 - Math.exp(-z * w * tau) * (Math.cos(wd * tau) + ((z * w) / wd) * Math.sin(wd * tau));
+}
+
+// A value that changes target many times: one spring per change, summed. It starts at the
+// first key's value.
+function track(keys, w = 14, z = 0.86) {
+  return (t) => {
+    let v = keys[0][1];
+    for (let i = 1; i < keys.length; i++) {
+      const [ti, vi, wi] = keys[i];
+      const d = vi - keys[i - 1][1];
+      if (d !== 0) v += d * S(t - ti, wi ?? w, z);
+    }
+    return v;
+  };
+}
+const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
+function colorTrack(keys, w = 16) {
+  const ch = [0, 1, 2].map((c) => track(keys.map(([t, h]) => [t, hex(h)[c]]), w, 1));
+  return (t) => `rgb(${ch.map((f) => Math.round(Math.min(255, Math.max(0, f(t))))).join(",")})`;
+}
+// Content that lives from a to b: enters on a spring, leaves faster.
+const vis = (t, a, b) => S(t - a, 22, 1) * (1 - S(t - b, 34, 1));
+const press = (t, at, depth) => depth * (S(t - at, 40, 1) - S(t - at - 0.09, 26, 1));
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+
+// ------------------------------------------------------------------------------------
+// The script.
+const T = {
+  marker: 1.5, sub: 2.5,
+  card: 5.0, specs: [5.4, 5.8, 6.2],
+  ask: 8.0, ctx: [8.5, 9.7], q: [10.0, 10.7], types: 11.0, pick: 11.5, rate: 12.5, yesno: 13.5, toButton: 14.0, askClick: 14.5,
+  chart: 15.0, rows: [15.5, 16.0, 16.5], hev: 17.0, steps: [17.5, 18.0, 18.5, 19.0], who: 19.5,
+  decide: 22.0, humanIn: 22.3, yesClick: 24.5, decided: 25.0,
+  compat: 26.5, strike: 27.5, plus: 28.0, keep: 28.5, json: 29.5, apiKey: 31.0,
+  end: 32.5,
+};
+const CTX = ["Checkout has been failing for every", "customer for the last hour."];
+const QUESTION = "Is this support request urgent?";
+const INK = "#16130f", WHITE = "#ffffff";
+
+const Z = (w, h) => Math.min(3.4, (0.8 * 1440) / w, (0.72 * 1440) / h);
+const SIZES = { title: [560, 230], card: [520, 280], end: [560, 270], who: [760, 760], ask: [480, 470], chart: [560, 310], decide: [480, 350], compat: [560, 440] };
+const STATES = [
+  // time, state, radius
+  [0, "title", 32],
+  [T.card, "card", 28],
+  [T.ask, "ask", 28],
+  [T.chart, "chart", 28],
+  [T.who, "who", 0],
+  [T.decide, "decide", 28],
+  [T.compat, "compat", 28],
+  [T.end, "end", 32],
+];
+const shapeW = track(STATES.map(([t, s]) => [t, SIZES[s][0]]));
+const shapeH = track(STATES.map(([t, s]) => [t, SIZES[s][1]]));
+const shapeR = track(STATES.map(([t, , r]) => [t, r]));
+const shapeC = colorTrack([[0, WHITE], [T.who, "#2b59ff"], [T.decide, WHITE]]);
+
+// Camera: focus point and zoom. Each state fills the frame; inside a state it can lean in.
+const ASK = (x, y) => [x - 240, y - 235]; // ask card local -> world
+const DECIDE = (x, y) => [x - 240, y - 175];
+const CAM = [
+  [0, 0, 0, Z(...SIZES.title)],
+  [T.card, 0, 0, Z(...SIZES.card)],
+  [T.ask, 0, 0, Z(...SIZES.ask)],
+  [T.ctx[0] - 0.1, 0, -70, 2.9],
+  [T.types, 0, 84, 3.1],
+  [T.toButton, 40, 110, 2.6],
+  [T.chart, 0, 0, Z(...SIZES.chart)],
+  [T.hev - 0.25, 0, 30, 2.35],
+  [T.decide, 0, 0, Z(...SIZES.decide)],
+  [T.compat, 0, -108, 2.45],
+  [T.json, 0, 110, 2.35],
+  [T.end, 0, 0, Z(...SIZES.end)],
+];
+const camX = track(CAM.map(([t, x]) => [t, x]), 7, 0.95);
+const camY = track(CAM.map(([t, , y]) => [t, y]), 7, 0.95);
+const camS = track(CAM.map(([t, , , s]) => [t, s]), 7, 0.95);
+const camAt = (t) => { let c = CAM[CAM.length - 1]; for (const k of CAM) if (k[0] <= t + 1e-6) c = k; return c; };
+const toScreen = (t, [x, y]) => { const [, fx, fy, s] = camAt(t); return [720 + (x - fx) * s, 720 + (y - fy) * s]; };
+
+// Cursors: screen-space keys on a critically damped hand.
+const TAB_X = (i) => 24 + 72 + 144 * i; // tab centers in the ask card
+const ASKER = [
+  [0, [1240, 1300]],
+  [T.pick - 0.45, toScreen(T.types, ASK(TAB_X(1), 292))],
+  [T.rate - 0.45, toScreen(T.types, ASK(TAB_X(2), 292))],
+  [T.yesno - 0.45, toScreen(T.types, ASK(TAB_X(0), 292))],
+  [T.askClick - 0.45, toScreen(T.toButton, ASK(364, 426))],
+  [T.chart, [1260, 1320]],
+  [T.ask, [1240, 1300]],
+];
+const HUMAN = [
+  [T.humanIn, toScreen(T.decide, DECIDE(20 + 84 + 32, 68 + 138 + 20))],
+  [T.yesClick - 0.8, toScreen(T.decide, DECIDE(20 + 16 + 30, 68 + 138 + 20))],
+  [T.decided + 0.4, [1300, 1360]],
+];
+const askerX = track(ASKER.map(([t, p]) => [t, p[0]]), 11, 1), askerY = track(ASKER.map(([t, p]) => [t, p[1]]), 11, 1);
+const humanX = track(HUMAN.map(([t, p]) => [t, p[0]]), 9, 1), humanY = track(HUMAN.map(([t, p]) => [t, p[1]]), 9, 1);
+const ASKER_CLICKS = [T.pick, T.rate, T.yesno, T.askClick];
+
+// The answer-type indicator: its two edges ride different springs (the leading edge is fast).
+const TYPE_KEYS = [[T.types - 0.6, 0], [T.pick, 1], [T.rate, 2], [T.yesno, 0]];
+function edge(side) {
+  return track(TYPE_KEYS.map(([t, i], k) => {
+    const prev = TYPE_KEYS[(k - 1 + TYPE_KEYS.length) % TYPE_KEYS.length][1];
+    const x = side === "left" ? 5 + 144 * i : 139 + 144 * i;
+    const leading = side === "left" ? i < prev : i > prev;
+    return [t, x, leading ? 22 : 12];
+  }));
+}
+const indL = edge("left"), indR = edge("right");
+
+// Latency chart on a log axis: 50ms on the left, a day on the right.
+const AX = { x0: 196, x1: 524, lo: Math.log10(0.05), hi: Math.log10(86400) };
+const xOf = (seconds) => AX.x0 + ((Math.log10(seconds) - AX.lo) / (AX.hi - AX.lo)) * (AX.x1 - AX.x0);
+const TICKS = [[0.1, "100ms"], [1, "1s"], [60, "1 min"], [3600, "1 hour"], [86400, "1 day"]];
+// hev's answer gets longer and the label bigger on every beat.
+const STEPS = [[1, "1 second", 18], [60, "1 minute", 24], [3600, "1 hour", 32], [86400, "1 day", 40]];
+const MODELS = [["OpenAI Decisions", 0.15, "150ms"], ["Clef", 0.2093, "209ms"], ["Jev", 0.227, "227ms"]];
+const ROW_Y = [102, 140, 178, 230];
+const hevLog = track([
+  [T.hev, Math.log10(0.05)],
+  ...STEPS.map(([secs], k) => [T.steps[k], Math.log10(secs)]),
+  [T.decide, Math.log10(0.05)],
+], 13, 0.9);
+
+const RESPONSE = ["{", '  "model": "hev",', '  "answers": {', '    "urgent": { "type": "noul", "noul": 1 }', "  },", '  "latency_ms": 38214', "}"];
+
+// ------------------------------------------------------------------------------------
+// Static DOM, built once.
+const $ = (id) => document.getElementById(id);
+for (const [host, color] of [["typeInk", INK], ["typeWhite", WHITE]]) {
+  ["Yes / No", "Pick one", "Rate it"].forEach((name, i) => {
+    const el = document.createElement("div");
+    el.className = "abs t";
+    el.style.cssText = `left:${144 * i}px;width:144px;top:16px;text-align:center;font-size:15px;font-weight:600;color:${color}`;
+    el.textContent = name;
+    $(host).appendChild(el);
+  });
+}
+$("ticks").innerHTML = TICKS.map(([s, name], i) =>
+  `<div class="abs" style="left:${xOf(s)}px;top:90px;width:1px;height:174px;background:var(--ink);opacity:0.08"></div>` +
+  `<div class="abs t mono" data-tick="${i}" style="left:${xOf(s) - 40}px;width:80px;top:272px;text-align:center;font-size:13px;color:var(--muted)">${name}</div>`).join("");
+$("bars").innerHTML = [...MODELS, ["Hev"]].map(([name], i) =>
+  `<div class="abs t" data-row="${i}" style="left:28px;top:${ROW_Y[i] - 9}px;font-size:17px;font-weight:${i === 3 ? 600 : 500}">${name}</div>` +
+  `<div class="abs" data-bar="${i}" style="left:${AX.x0}px;top:${ROW_Y[i] - 10}px;height:20px;border-radius:4px;background:${i === 3 ? "var(--brand)" : "var(--ink)"};opacity:${i === 3 ? 1 : 0.25}"></div>` +
+  (i < 3 ? `<div class="abs t mono" data-val="${i}" style="top:${ROW_Y[i] - 7}px;font-size:14px;color:var(--muted)"></div>` : "")).join("");
+$("codeBox").innerHTML = RESPONSE.map((line, i) => {
+  const indent = line.length - line.trimStart().length;
+  return `<div class="abs t mono" data-line="${i}" style="left:${18 + indent * 7.8}px;top:${18 + 20 * i}px;font-size:13px;color:rgba(255,255,255,0.88)"></div>`;
+}).join("");
+document.querySelectorAll("[data-line]").forEach((el) => (el.textContent = RESPONSE[el.dataset.line].trimStart()));
+const lineEls = [...document.querySelectorAll("[data-line]")];
+const SPECS = [["Parameters", "1 human"], ["GPUs", "In this economy?"], ["Context window", "Honestly, not much"]];
+$("specs").innerHTML = SPECS.map(([k, v], i) =>
+  `<div class="abs" data-spec="${i}" style="left:0;right:0;top:${i * 44}px;height:44px;border-top:1.5px solid var(--line)">` +
+  `<div class="abs t" style="left:8px;top:15px;font-size:15px;font-weight:500;color:var(--muted)">${k}</div>` +
+  `<div class="abs t" style="right:8px;top:15px;font-size:15px;font-weight:600">${v}</div></div>`).join("");
+const specEls = [...document.querySelectorAll("[data-spec]")];
+const q = (sel) => [...document.querySelectorAll(sel)];
+const rowEls = q("[data-row]"), barEls = q("[data-bar]"), valEls = q("[data-val]"), tickEls = q("[data-tick]");
+
+// Text widths, measured once with the loaded fonts (canvas ignores transforms).
+let MARK_X = 0, MARK_W = 0, STRIKE_W = 0;
+function textWidth(font, text, spacing = 0) {
+  const ctx = document.createElement("canvas").getContext("2d");
+  ctx.font = font;
+  return ctx.measureText(text).width + spacing * text.length;
+}
+function measure() {
+  MARK_X = 280 - textWidth("700 64px 'Bricolage Display'", "Decisions API", -3.2) / 2 - 16;
+  MARK_W = textWidth("400 26px Marker", "(Human)");
+  STRIKE_W = textWidth("400 15px 'JetBrains Mono'", "https://api.typesafe.ai/v1/systemone");
+}
+
+function layer(id, v) {
+  const el = $(id);
+  el.style.opacity = v;
+  el.style.display = v < 0.002 ? "none" : "";
+  el.style.filter = v > 0.995 ? "none" : `blur(${((1 - v) * 7).toFixed(2)}px)`;
+  el.style.transform = v > 0.995 ? "" : `scale(${0.95 + 0.05 * v})`;
+}
+function fade(el, v, y = 0) {
+  el.style.opacity = v;
+  el.style.filter = v > 0.995 ? "none" : `blur(${((1 - v) * 5).toFixed(2)}px)`;
+  el.style.transform = v > 0.995 ? "" : `translateY(${(1 - v) * y}px)`;
+}
+const enter = (t, at) => S(t - at, 18, 0.9);
+const typed = (t, [a, b], text) => text.slice(0, Math.round(clamp((t - a) / (b - a), 0, 1) * text.length));
+
+// ------------------------------------------------------------------------------------
+window.seek = function seek(time) {
+  const t = clamp(time, 0, L);
+
+  // Shape and camera.
+  const w = shapeW(t), h = shapeH(t);
+  const shape = $("shape");
+  shape.style.width = `${w}px`;
+  shape.style.height = `${h}px`;
+  shape.style.left = `${-w / 2}px`;
+  shape.style.top = `${-h / 2}px`;
+  shape.style.borderRadius = `${Math.min(shapeR(t), h / 2)}px`;
+  shape.style.background = shapeC(t);
+  $("world").style.transform = `scale(${camS(t)}) translate(${-camX(t)}px, ${-camY(t)}px)`;
+
+  // 1. Title: "Introducing Decisions API", then the marker adds "(Human)".
+  const ending = t >= T.end;
+  layer("L-title", ending ? vis(t, T.end + 0.1, 99) : vis(t, -1, T.card));
+
+  // 1b. Model card: the spec rows land one after another.
+  layer("L-card", vis(t, T.card + 0.08, T.ask));
+  specEls.forEach((el, i) => fade(el, enter(t, T.specs[i]), 8));
+  // The card is taller at the end; keep the title where it was.
+  $("L-title").style.marginTop = ending ? "-135px" : "-115px";
+  const mk = $("marker");
+  const reveal = ending ? S(t - T.end - 0.45, 9, 1) : S(t - T.marker, 9, 1);
+  mk.style.left = `${MARK_X}px`;
+  mk.style.clipPath = `inset(-20px ${(1 - reveal) * (MARK_W + 20)}px -20px -20px)`;
+  mk.style.transform = `rotate(-5deg) translateY(${(1 - enter(t, ending ? T.end + 0.45 : T.marker)) * 6}px)`;
+
+  // The kicker steps aside when the marker arrives.
+  fade($("kicker"), ending ? 0 : 1 - S(t - T.marker + 0.15, 22, 1), -6);
+  fade($("titleSub"), enter(t, ending ? T.end + 0.8 : T.sub), 12);
+  $("site").style.display = ending ? "flex" : "none";
+  fade($("site"), enter(t, T.end + 1.2), 10);
+
+  // 2. Ask: context and question type in, the answer types, then ask.
+  layer("L-ask", vis(t, T.ask + 0.08, T.chart));
+  const c1 = typed(t, [T.ctx[0], T.ctx[0] + 0.7], CTX[0]);
+  const c2 = typed(t, [T.ctx[0] + 0.7, T.ctx[1]], CTX[1]);
+  const qt = typed(t, T.q, QUESTION);
+  $("ctx1").textContent = c1; $("ctx2").textContent = c2; $("qText").textContent = qt;
+  const caretEl = t < T.ctx[1] + 0.15 ? (c2 ? $("ctx2") : $("ctx1")) : $("qText");
+  const typing = (t > T.ctx[0] && t < T.ctx[1]) || (t > T.q[0] && t < T.q[1]);
+  const caretOn = t > T.ctx[0] - 0.4 && t < T.types && (typing || (t * 2) % 1 < 0.6);
+  $("caret").style.opacity = caretOn ? 1 : 0;
+  $("caret").style.left = `${caretEl.offsetLeft + caretEl.offsetWidth + 2}px`;
+  $("caret").style.top = `${caretEl.offsetTop - 2}px`;
+  const l = indL(t), r = indR(t);
+  const dip = press(t, T.pick, 0.06) + press(t, T.rate, 0.06) + press(t, T.yesno, 0.06);
+  $("indicator").style.left = `${24 + l}px`;
+  $("indicator").style.width = `${r - l}px`;
+  $("indicator").style.transform = `scaleY(${1 - dip})`;
+  $("typeWhite").style.clipPath = `inset(5px ${432 - r}px 5px ${l}px round 10px)`;
+  fade($("opt-noul"), Math.max(vis(t, T.types - 0.3, T.pick), vis(t, T.yesno + 0.05, T.chart + 1)), 8);
+  fade($("opt-choice"), vis(t, T.pick + 0.05, T.rate), 8);
+  fade($("opt-score"), vis(t, T.rate + 0.05, T.yesno), 8);
+  $("askBtn").style.transform = `scale(${1 - press(t, T.askClick, 0.07)})`;
+
+  // 3. Latency: three decision models, then hev on the same axis.
+  layer("L-chart", vis(t, T.chart + 0.08, T.who));
+  layer("L-who", vis(t, T.who + 0.12, T.decide));
+  const hevS = 10 ** hevLog(t);
+  MODELS.forEach(([, s, label], i) => {
+    const on = enter(t, T.rows[i]);
+    fade(rowEls[i], on, 8);
+    barEls[i].style.width = `${Math.max(1, (xOf(s) - AX.x0) * S(t - T.rows[i], 16, 0.9))}px`;
+    valEls[i].textContent = label;
+    valEls[i].style.left = `${xOf(s) + 8}px`;
+    fade(valEls[i], enter(t, T.rows[i] + 0.15) * 1, 4);
+  });
+  fade(rowEls[3], enter(t, T.hev - 0.4), 8);
+  const hevX = Math.max(AX.x0 + 1, xOf(hevS));
+  barEls[3].style.width = `${hevX - AX.x0}px`;
+  barEls[3].style.opacity = enter(t, T.hev - 0.4);
+  // The label only changes on the beat, so it never counts back.
+  const step = T.steps.filter((at) => t >= at).length;
+  const label = $("hevLabel");
+  if (step > 0) {
+    const [, text, size] = STEPS[step - 1];
+    const pop = S(t - T.steps[step - 1], 20, 0.8);
+    label.textContent = text;
+    label.style.fontSize = `${size}px`;
+    label.style.top = `${ROW_Y[3] - 22 - size}px`;
+    label.style.opacity = step === 1 ? pop : 1;
+    label.style.transform = `scale(${0.7 + 0.3 * pop})`;
+  } else label.style.opacity = 0;
+  tickEls.forEach((el, i) => {
+    el.style.color = i >= 1 && step >= i ? "var(--brand)" : "";
+    fade(el, enter(t, T.chart + 0.3 + i * 0.05), 4);
+  });
+
+  // 4. Answer: another human's question; the human hovers No, picks Yes.
+  layer("L-decide", vis(t, T.decide + 0.08, T.compat));
+  const v = clamp((t - T.decide) * 2.4 + 30, 30, 38.2);
+  $("jobBar").style.width = `${(440 * (120 - v)) / 120}px`;
+  $("jobLeft").textContent = `${Math.ceil(120 - v)}s left`;
+  const hoverNo = t > T.humanIn + 0.5 && t < T.yesClick - 0.6;
+  $("pillNo").style.borderColor = hoverNo ? "#a39e96" : "";
+  const yes = S(t - T.yesClick, 26, 1) > 0.5;
+  $("pillYes").style.background = yes ? "#2b59ff" : "#fff";
+  $("pillYes").style.borderColor = yes ? "#2b59ff" : "";
+  $("pillYes").style.color = yes ? "#fff" : "";
+  $("pillYes").style.transform = `scale(${1 - press(t, T.yesClick, 0.08)})`;
+  $("job").style.opacity = 1 - 0.4 * S(t - T.decided - 0.2, 14, 1);
+  fade($("toast"), vis(t, T.decided, T.compat + 1), 10);
+
+  // 5. Jev-compatible: one line changes, the response stays the same.
+  layer("L-compat", vis(t, T.compat + 0.08, T.end));
+  $("strike").style.width = `${Math.max(0.5, STRIKE_W * S(t - T.strike, 16, 1))}px`;
+  const plus = enter(t, T.plus);
+  $("newRow").style.opacity = plus;
+  $("newRow").style.transform = `translateX(${(1 - plus) * 30}px)`;
+  fade($("keep"), enter(t, T.keep), 10);
+  fade($("codeBox"), enter(t, T.json - 0.3), 10);
+  lineEls.forEach((el, i) => fade(el, enter(t, T.json + i * 0.06), 5));
+  fade($("apiKey"), enter(t, T.apiKey), 10);
+
+  // Cursors.
+  let squeeze = 0;
+  for (const c of ASKER_CLICKS) squeeze += press(t, c, 0.14);
+  const asker = $("asker");
+  asker.style.opacity = vis(t, T.types - 0.2, T.chart + 0.2);
+  asker.style.transform = `translate(${askerX(t) - 5.6}px, ${askerY(t) - 4.2}px) scale(${1 - squeeze})`;
+  const human = $("human");
+  human.style.opacity = vis(t, T.humanIn - 0.1, T.decided + 0.9);
+  human.style.transform = `translate(${humanX(t) - 5.6}px, ${humanY(t) - 4.2}px) scale(${1 - press(t, T.yesClick, 0.14)})`;
+};
+
+// Sound cues, from the same timeline.
+const keyTicks = (a, b, n) => Array.from({ length: n }, (_, i) => ({ t: a + ((b - a) * (i + 0.5)) / n, kind: "key" }));
+window.EVENTS = [
+  ...ASKER_CLICKS.map((t) => ({ t, kind: "click" })),
+  { t: T.yesClick, kind: "click" },
+  { t: T.marker, kind: "scribble" },
+  ...keyTicks(T.ctx[0], T.ctx[1], 18), ...keyTicks(T.q[0], T.q[1], 10),
+  ...T.rows.map((t) => ({ t, kind: "tick" })),
+  ...T.steps.map((t, k) => ({ t, kind: `step${k}` })),
+  { t: T.who, kind: "boom" },
+  { t: T.decided, kind: "success" },
+  { t: T.strike, kind: "tick" }, { t: T.plus, kind: "success" }, { t: T.apiKey, kind: "tick" },
+  { t: T.end + 0.45, kind: "scribble" },
+  ...T.specs.map((t) => ({ t, kind: "tick" })),
+  ...[T.card, T.ask, T.chart, T.decide, T.compat, T.end].map((t) => ({ t, kind: "morph" })),
+];
+window.DURATION = L;
+const FONTS = ["500 16px Bricolage", "600 16px Bricolage", "700 16px 'Bricolage Display'", "400 16px 'JetBrains Mono'", "500 16px 'JetBrains Mono'", "400 16px Marker"];
+window.ready = Promise.all(FONTS.map((f) => document.fonts.load(f))).then(() => { measure(); seek(Number(new URLSearchParams(location.search).get("t") ?? 0)); });
+</script>
+</body>
+</html>

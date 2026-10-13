@@ -1,0 +1,48 @@
+# Deploys to Cloudflare on every push to main.
+#
+# Secrets live in the `production` environment, which only the main branch may use,
+# so pull requests (including from forks) and other branches can never read them.
+# This workflow deliberately has no pull_request / pull_request_target trigger.
+name: Deploy
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: pnpm/action-setup@ea17c68df8912ef543352723c149a84f56e3d413 # v6.1.0
+        with:
+          version: 12.11.2
+
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 24
+          cache: pnpm
+
+      # No secrets in this step: dependency install scripts never see them.
+      - run: pnpm install --frozen-lockfile
+
+      - run: pnpm exec vp check
+
+      - run: pnpm run deploy
+        env:
+          CLOUDFLARE_API_KEY: ${{ secrets.CLOUDFLARE_API_KEY }}
+          CLOUDFLARE_EMAIL: ${{ secrets.CLOUDFLARE_EMAIL }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          APP_DOMAIN: ${{ vars.APP_DOMAIN }}
