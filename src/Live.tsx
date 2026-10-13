@@ -565,12 +565,14 @@ function DecidedRow({ d }: DecidedRowProps) {
     .map(([k, q]) => q.options.find((o) => o.key === d.picks?.[k])?.label)
     .filter(Boolean)
     .join(", ");
+  const questions = Object.entries(d.questions);
+  const title = questions.map(([, q]) => q.instructions).join(" · ");
   return (
     <li>
       <details className="group">
         <summary className="hover:bg-ink/[0.04] focus-visible:outline-brand/60 flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-1 py-2.5 text-sm focus-visible:outline-2 [&::-webkit-details-marker]:hidden">
           <span className="text-ink/60 group-open:text-ink group-hover:text-ink/85 truncate">
-            {d.state}
+            {title}
           </span>
           <span className="shrink-0 text-right font-mono text-xs">
             {d.picks ? (
@@ -586,12 +588,10 @@ function DecidedRow({ d }: DecidedRowProps) {
           </span>
         </summary>
         <div className="space-y-4 px-1 pt-1 pb-4">
-          <p className="font-display text-lg leading-snug font-semibold tracking-tight break-words">
-            “{d.state}”
-          </p>
-          {Object.entries(d.questions).map(([key, q]) => (
+          <p className="text-ink/70 text-sm break-words">“{d.state}”</p>
+          {questions.map(([key, q]) => (
             <div key={key}>
-              <p className="text-ink/80 mb-2 text-sm">{q.instructions}</p>
+              {questions.length > 1 && <p className="text-ink/80 mb-2 text-sm">{q.instructions}</p>}
               <div className="flex flex-wrap gap-2">
                 {q.options.map((o) => (
                   <span
