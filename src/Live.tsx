@@ -570,11 +570,11 @@ function DecidedRow({ d }: DecidedRowProps) {
   return (
     <li>
       <details className="group">
-        <summary className="hover:bg-ink/[0.04] focus-visible:outline-brand/60 flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg px-1 py-2.5 text-sm focus-visible:outline-2 [&::-webkit-details-marker]:hidden">
-          <span className="text-ink/60 group-open:text-ink group-hover:text-ink/85 truncate">
+        <summary className="hover:bg-ink/[0.04] focus-visible:outline-brand/60 flex cursor-pointer list-none flex-col gap-1 rounded-lg px-1 py-2.5 text-sm focus-visible:outline-2 sm:flex-row sm:items-baseline sm:justify-between sm:gap-4 [&::-webkit-details-marker]:hidden">
+          <span className="text-ink/60 group-open:text-ink group-hover:text-ink/85 max-w-full break-words">
             {title}
           </span>
-          <span className="shrink-0 text-right font-mono text-xs">
+          <span className="shrink-0 font-mono text-xs sm:text-right">
             {d.picks ? (
               <>
                 <span className="text-brand">{summary}</span>{" "}
