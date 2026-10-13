@@ -1,4 +1,4 @@
-import { type ReactNode } from "react";
+import { Fragment, type ReactNode } from "react";
 
 import { LiveGrid } from "./Live.tsx";
 
@@ -68,8 +68,9 @@ const specs = [
 
 function ModelCard() {
   return (
-    <section className="mx-auto max-w-6xl px-6 pt-12 pb-12">
+    <section className="mx-auto grid max-w-6xl items-center px-6 pt-12 pb-12 lg:grid-cols-2 lg:gap-12">
       <SectionHead
+        className="lg:mb-0"
         id="model"
         kicker="Model card"
         title={
@@ -80,7 +81,7 @@ function ModelCard() {
       >
         A human decision model. Same API as Jev and Clef, different hardware.
       </SectionHead>
-      <dl className="border-line max-w-2xl overflow-hidden rounded-2xl border bg-white">
+      <dl className="border-line w-full max-w-2xl overflow-hidden rounded-2xl border bg-white">
         {specs.map(([k, v]) => (
           <div
             key={k}
@@ -96,15 +97,16 @@ function ModelCard() {
 }
 
 type SectionHeadProps = {
+  className?: string;
   id: string;
   kicker: string;
   title: ReactNode;
   children?: ReactNode;
 };
 
-function SectionHead({ id, kicker, title, children }: SectionHeadProps) {
+function SectionHead({ className = "", id, kicker, title, children }: SectionHeadProps) {
   return (
-    <div id={id} className="mb-14 max-w-2xl scroll-mt-24">
+    <div id={id} className={`mb-14 max-w-2xl scroll-mt-24 ${className}`}>
       <p className="text-brand mb-3 font-mono text-xs tracking-widest uppercase">{kicker}</p>
       <h2 className="font-display text-4xl leading-[0.95] font-bold tracking-tighter md:text-5xl">
         {title}
@@ -186,15 +188,28 @@ function Api() {
 
 type DiffProps = { from: string; before: string };
 
+// Long URLs wrap after a slash, never mid-word.
+const breakable = (url: string) =>
+  url.split("/").map((part, i) => (
+    <Fragment key={i}>
+      {i > 0 && (
+        <>
+          /<wbr />
+        </>
+      )}
+      {part}
+    </Fragment>
+  ));
+
 function Diff({ from, before }: DiffProps) {
   return (
     <div className="border-line overflow-hidden rounded-2xl border bg-white font-mono text-sm">
       <div className="border-line text-muted border-b px-5 py-2 text-xs">{from}</div>
-      <div className="overflow-x-auto bg-red-500/10 px-5 py-2.5 whitespace-nowrap text-red-700">
-        - {before}
+      <div className="bg-red-500/10 px-5 py-2.5 break-words text-red-700">
+        - {breakable(before)}
       </div>
-      <div className="bg-emerald-500/10 px-5 py-2.5 text-emerald-700">
-        + https://usehev.com/v1/systemone
+      <div className="bg-emerald-500/10 px-5 py-2.5 break-words text-emerald-700">
+        + {breakable("https://usehev.com/v1/systemone")}
       </div>
     </div>
   );
